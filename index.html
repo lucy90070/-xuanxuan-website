@@ -58,7 +58,6 @@
             background: #ffebf0;
             margin-top: 5px;
             border-radius: 5px;
-            position: relative;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -139,7 +138,7 @@
     <!-- Firebase 設定 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-        import { getDatabase, ref, push, set, remove, onChildAdded } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
+        import { getDatabase, ref, push, set, remove, onChildAdded, onChildRemoved } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCeVz567cFsoGzBwXjflJqeuZcOUrUFInE",
@@ -173,9 +172,17 @@
             const data = snapshot.val();
             const messageElem = document.createElement("div");
             messageElem.classList.add("message");
+            messageElem.setAttribute("id", data.id);
             messageElem.innerHTML = `<strong>${data.name}:</strong> ${data.message} 
                 <button class="delete-btn" onclick="deleteMessage('${data.id}')">❌</button>`;
             document.getElementById("messages").appendChild(messageElem);
+        });
+
+        onChildRemoved(messagesRef, (snapshot) => {
+            const messageElem = document.getElementById(snapshot.key);
+            if (messageElem) {
+                messageElem.remove();
+            }
         });
 
         window.sendMessage = sendMessage;
@@ -184,6 +191,16 @@
 
     <!-- 其他 JavaScript -->
     <script>
+        function showInfo() {
+            document.getElementById("output").innerText = "萱萱是一個愛美劇、愛吃又討厭『優化』的台中人！夢想是去冰島！🥰";
+        }
+
+        function randomQuote() {
+            const quotes = ["買鞋好難！", "吃東西快樂 > 一切", "奶油 > 全世界 🐶"];
+            let randomIndex = Math.floor(Math.random() * quotes.length);
+            document.getElementById("output").innerText = quotes[randomIndex];
+        }
+
         function dropApple() {
             let apple = document.getElementById("apple");
             apple.style.top = "120px";
