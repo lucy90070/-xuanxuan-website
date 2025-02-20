@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>歡迎來認識萱萱！</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #fff0f5;
+            padding: 50px;
+        }
+        h1 {
+            color: #ff69b4;
+        }
+        button {
+            background-color: #ff69b4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #ff1493;
+        }
+        #output {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+        #clock {
+            font-size: 20px;
+            color: #ff4081;
+            margin-bottom: 20px;
+        }
+        #tree-container {
+            position: relative;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        #tree {
+            width: 150px;
+        }
+        .apple {
+            width: 30px;
+            position: absolute;
+            left: 50%;
+            top: 20px;
+            transform: translateX(-50%);
+            transition: top 1s ease-in;
+        }
+    </style>
+</head>
+<body>
+    <h1>歡迎來認識萱萱！</h1>
+    <p id="clock">現在時間：--:--</p>
+
+    <button onclick="showInfo()">關於萱萱</button>
+    <button onclick="randomQuote()">萱萱金句</button>
+    <button onclick="xuanIndex()">今天的萱萱指數</button>
+
+    <p id="output"></p>
+
+    <div id="tree-container">
+        <img id="tree" src="https://upload.wikimedia.org/wikipedia/commons/3/34/Tree_illustration.png" alt="樹">
+        <img id="apple" class="apple" src="https://upload.wikimedia.org/wikipedia/commons/1/15/Red_Apple.png" alt="蘋果">
+    </div>
+    
+    <p>點擊樹，讓蘋果掉下來！ 🍎</p>
+
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString("zh-TW", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true });
+            document.getElementById("clock").innerText = "現在時間：" + timeString;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        function showInfo() {
+            document.getElementById("output").innerText = "萱萱是一個愛美劇、愛吃又討厭『優化』的台中人！夢想是去冰島！🥰";
+        }
+
+        function randomQuote() {
+            const quotes = [
+                "買鞋真的好難，寬腳人生太痛苦了🥲",
+                "吃東西的快樂 > 一切",
+                "美劇萬歲！HIMYM、TBBT、Modern Family 是人生寶藏",
+                "我不是小孩，但為什麼一直想吃零食🤔",
+                "討厭優化這個詞，好中國😤",
+                "奶油 > 全世界 🐶"
+            ];
+            let randomIndex = Math.floor(Math.random() * quotes.length);
+            document.getElementById("output").innerText = quotes[randomIndex];
+        }
+
+        function xuanIndex() {
+            const index = Math.floor(Math.random() * 101);
+            document.getElementById("output").innerText = `今天的萱萱指數：${index}%！活力滿滿！💖`;
+        }
+
+        document.getElementById("tree-container").addEventListener("click", function () {
+            let apple = document.getElementById("apple");
+            apple.style.top = "120px";
+            setTimeout(() => {
+                apple.style.top = "20px";
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
