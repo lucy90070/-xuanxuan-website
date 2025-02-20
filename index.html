@@ -4,6 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>歡迎來認識萱萱！</title>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
+        import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "你的 Firebase API Key",
+            authDomain: "xuanxuan-website.firebaseapp.com",
+            databaseURL: "https://xuanxuan-website-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "xuanxuan-website",
+            storageBucket: "xuanxuan-website.appspot.com",
+            messagingSenderId: "711868711442",
+            appId: "1:711868711442:web:72148bba056c1690dccecb"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+    </script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -27,7 +44,7 @@
         button:hover {
             background-color: #ff1493;
         }
-        #output {
+        #output, #messages {
             margin-top: 20px;
             font-size: 18px;
             color: #333;
@@ -37,7 +54,7 @@
             margin-top: 10px;
             color: #ff4081;
         }
-        /* 繪製幾何圖形的樹 */
+        /* 幾何圖形的樹 */
         #tree-container {
             position: relative;
             width: 100px;
@@ -73,9 +90,24 @@
             left: 45px;
             transition: top 1s;
         }
+        /* 留言板樣式 */
+        #message-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            text-align: left;
+            max-width: 300px;
+        }
+        input {
+            width: 90%;
+            padding: 8px;
+            margin-top: 5px;
+        }
     </style>
 </head>
-    
 <body>
     <h1>歡迎來認識萱萱！</h1>
     <p>點擊下方按鈕，探索關於萱萱的小秘密～</p>
@@ -94,8 +126,17 @@
         <div class="apple" id="apple"></div>
     </div>
     <p>點擊樹，讓蘋果掉下來！🍎</p>
+
+    <!-- 留言板 -->
+    <div id="message-box">
+        <h3>留言板 💬</h3>
+        <input type="text" id="nameInput" placeholder="你的名字">
+        <input type="text" id="messageInput" placeholder="留言內容">
+        <button id="sendButton">發送</button>
+        <div id="messages"></div>
+    </div>
     
-    <script>
+    <script type="module">
         function updateClock() {
             let now = new Date();
             document.getElementById("clock").innerText = "現在時間：" + now.toLocaleTimeString();
@@ -110,13 +151,11 @@
         function randomQuote() {
             const quotes = [
                 "買鞋真的好難，寬腳人生太痛苦了🥲",
-                "Have a bad day!🤗",
-                "美劇萬歲！TBBT、HIMYM、Modern Family 是人生寶藏",
+                "吃東西的快樂 > 一切",
+                "美劇萬歲！HIMYM、TBBT、Modern Family 是人生寶藏",
                 "我不是小孩，但為什麼一直想吃零食🤔",
                 "討厭優化這個詞，好中國😤",
-                "只要我吃得夠快，熱量就追不上我 😎",
-                "誰很棒？你很棒！🫵",
-                "奶油粉絲團頭號會長 🐶"
+                "奶油 > 全世界 🐶"
             ];
             let randomIndex = Math.floor(Math.random() * quotes.length);
             document.getElementById("output").innerText = quotes[randomIndex];
@@ -144,26 +183,38 @@
                 apple.style.top = "20px";
             }, 2000);
         }
+
+        function loadMessages() {
+            const messagesRef = ref(db, "messages");
+            onValue(messagesRef, (snapshot) => {
+                const messagesContainer = document.getElementById("messages");
+                messagesContainer.innerHTML = "";
+
+                const messages = snapshot.val();
+                if (messages) {
+                    Object.values(messages).slice(-10).forEach(msg => {
+                        const p = document.createElement("p");
+                        p.innerText = `${msg.name}: ${msg.message}`;
+                        messagesContainer.appendChild(p);
+                    });
+                }
+            });
+        }
+
+        function sendMessage() {
+            const name = document.getElementById("nameInput").value.trim();
+            const message = document.getElementById("messageInput").value.trim();
+            if (name && message) {
+                push(ref(db, "messages"), { name, message });
+                document.getElementById("messageInput").value = "";
+            }
+        }
+
+        window.onload = () => {
+            loadMessages();
+            document.getElementById("sendButton").addEventListener("click", sendMessage);
+        };
     </script>
-    <script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyCeVz567cFsoGzBwXjflJqeuZcOUrUFInE",
-    authDomain: "xuanxuan-website.firebaseapp.com",
-    databaseURL: "https://xuanxuan-website-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "xuanxuan-website",
-    storageBucket: "xuanxuan-website.firebasestorage.app",
-    messagingSenderId: "711868711442",
-    appId: "1:711868711442:web:72140bba056c1690dccecb"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-</script>
 </body>
 </html>
+
