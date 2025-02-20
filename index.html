@@ -124,89 +124,35 @@
         <div class="tree-trunk"></div>
         <div class="apple" id="apple"></div>
     </div>
-    <p>點擊樹，摘蘋果給萱萱吃！🍎</p>
+    <p>點擊樹，讓蘋果掉下來！🍎</p>
 
-    <!-- 留言區 -->
-    <div id="message-box">
-        <h3>留言區</h3>
-        <input type="text" id="name-input" placeholder="你的名字..." />
-        <input type="text" id="message-input" placeholder="輸入留言..." />
-        <button onclick="sendMessage()">發送</button>
-        <div id="messages"></div>
-    </div>
-
-    <!-- Firebase 設定 -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-        import { getDatabase, ref, push, set, remove, onChildAdded, onChildRemoved } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCeVz567cFsoGzBwXjflJqeuZcOUrUFInE",
-            authDomain: "xuanxuan-website.firebaseapp.com",
-            databaseURL: "https://xuanxuan-website-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "xuanxuan-website",
-            storageBucket: "xuanxuan-website.firebasestorage.app",
-            messagingSenderId: "711868711442",
-            appId: "1:711868711442:web:72140bba056c1690dccecb"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        const messagesRef = ref(db, "messages");
-
-        function sendMessage() {
-            const name = document.getElementById("name-input").value.trim();
-            const message = document.getElementById("message-input").value.trim();
-            if (name !== "" && message !== "") {
-                const newMessageRef = push(messagesRef);
-                set(newMessageRef, { name, message, id: newMessageRef.key });
-                document.getElementById("message-input").value = "";
-            }
-        }
-
-        function deleteMessage(messageId) {
-            remove(ref(db, `messages/${messageId}`));
-        }
-
-        onChildAdded(messagesRef, (snapshot) => {
-            const data = snapshot.val();
-            const messageElem = document.createElement("div");
-            messageElem.classList.add("message");
-            messageElem.setAttribute("id", data.id);
-            messageElem.innerHTML = `<strong>${data.name}:</strong> ${data.message} 
-                <button class="delete-btn" onclick="deleteMessage('${data.id}')">❌</button>`;
-            document.getElementById("messages").appendChild(messageElem);
-        });
-
-        onChildRemoved(messagesRef, (snapshot) => {
-            const messageElem = document.getElementById(snapshot.key);
-            if (messageElem) {
-                messageElem.remove();
-            }
-        });
-
-        window.sendMessage = sendMessage;
-        window.deleteMessage = deleteMessage;
-    </script>
-
-    <!-- 其他 JavaScript -->
     <script>
-        function showInfo() {
-            document.getElementById("output").innerText = "萱萱是一個愛美劇、愛吃又討厭『優化』的台中人！夢想是去冰島！🥰";
-        }
-
         function randomQuote() {
-            const quotes = ["買鞋好難！", "吃東西快樂 > 一切", "奶油 > 全世界 🐶"];
+            const quotes = [
+                "買鞋真的好難，寬腳人生太痛苦了🥲",
+                "吃東西的快樂 > 一切",
+                "美劇萬歲！HIMYM、TBBT、Modern Family 是人生寶藏",
+                "我不是小孩，但為什麼一直想吃零食🤔",
+                "討厭優化這個詞，好中國😤",
+                "奶油 > 全世界 🐶"
+            ];
             let randomIndex = Math.floor(Math.random() * quotes.length);
             document.getElementById("output").innerText = quotes[randomIndex];
         }
-
-        function dropApple() {
-            let apple = document.getElementById("apple");
-            apple.style.top = "120px";
-            setTimeout(() => {
-                apple.style.top = "20px";
-            }, 2000);
+        
+        function xuanIndex() {
+            const index = Math.floor(Math.random() * 101);
+            let status = "";
+            if (index >= 80) {
+                status = "🌳 樹木繁茂，充滿活力！💖";
+            } else if (index >= 60) {
+                status = "🌿 枝葉茂盛，狀態不錯！";
+            } else if (index >= 40) {
+                status = "🍂 有點疲憊，需要灌溉！";
+            } else {
+                status = "🌱 有點枯萎，記得休息！";
+            }
+            document.getElementById("output").innerText = `今天的萱萱指數：${index}%！${status}`;
         }
     </script>
 </body>
