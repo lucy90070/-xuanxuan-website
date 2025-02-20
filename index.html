@@ -126,6 +126,15 @@
     </div>
     <p>點擊樹，讓蘋果掉下來！🍎</p>
 
+    <!-- 留言區 -->
+    <div id="message-box">
+        <h3>留言區</h3>
+        <input type="text" id="username" placeholder="輸入姓名...">
+        <input type="text" id="message" placeholder="輸入留言...">
+        <button onclick="sendMessage()">發送</button>
+        <div id="messages"></div>
+    </div>
+
     <script>
         function randomQuote() {
             const quotes = [
@@ -153,6 +162,14 @@
                 status = "🌱 有點枯萎，記得休息！";
             }
             document.getElementById("output").innerText = `今天的萱萱指數：${index}%！${status}`;
+        }
+
+        function dropApple() {
+            let apple = document.getElementById("apple");
+            apple.style.top = "120px";
+            setTimeout(() => {
+                apple.style.top = "20px";
+            }, 2000);
         }
     </script>
 </body>
