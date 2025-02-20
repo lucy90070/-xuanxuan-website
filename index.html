@@ -201,9 +201,21 @@
             document.getElementById("output").innerText = quotes[randomIndex];
         }
 
-        function xuanIndex() {
-            const index = Math.floor(Math.random() * 101);
-            document.getElementById("output").innerText = `今天的萱萱指數：${index}%`;
+       function xuanIndex() {
+    const index = Math.floor(Math.random() * 101); // 產生 0~100 的隨機數
+    let status = "";
+
+    if (index >= 80) {
+        status = "🌳 樹木繁茂，充滿活力！💖";
+    } else if (index >= 60) {
+        status = "🌿 枝葉茂盛，狀態不錯！";
+    } else if (index >= 40) {
+        status = "🍂 有點疲憊，需要灌溉！";
+    } else {
+        status = "🌱 有點枯萎，記得休息！";
+    }
+
+    document.getElementById("output").innerText = `今天的萱萱指數：${index}%！${status}`;
         }
 
         function dropApple() {
