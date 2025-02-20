@@ -34,49 +34,70 @@
         }
         #clock {
             font-size: 20px;
+            margin-top: 10px;
             color: #ff4081;
-            margin-bottom: 20px;
         }
+        /* 繪製幾何圖形的樹 */
         #tree-container {
             position: relative;
-            display: inline-block;
-            margin-top: 20px;
+            width: 100px;
+            height: 150px;
+            margin: 20px auto;
         }
-        #tree {
-            width: 150px;
+        .tree-trunk {
+            width: 30px;
+            height: 80px;
+            background-color: saddlebrown;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .tree-leaves {
+            width: 100px;
+            height: 100px;
+            background-color: green;
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
         }
         .apple {
-            width: 30px;
+            width: 15px;
+            height: 15px;
+            background-color: red;
+            border-radius: 50%;
             position: absolute;
-            left: 50%;
             top: 20px;
-            transform: translateX(-50%);
-            transition: top 1s ease-in;
+            left: 45px;
+            transition: top 1s;
         }
     </style>
 </head>
 <body>
     <h1>歡迎來認識萱萱！</h1>
-    <p id="clock">現在時間：--:--</p>
-
+    <p>點擊下方按鈕，探索關於萱萱的小秘密～</p>
+    <p id="clock"></p>
+    
     <button onclick="showInfo()">關於萱萱</button>
     <button onclick="randomQuote()">萱萱金句</button>
     <button onclick="xuanIndex()">今天的萱萱指數</button>
-
-    <p id="output"></p>
-
-    <div id="tree-container">
-        <img id="tree" src="https://upload.wikimedia.org/wikipedia/commons/3/34/Tree_illustration.png" alt="樹">
-        <img id="apple" class="apple" src="https://upload.wikimedia.org/wikipedia/commons/1/15/Red_Apple.png" alt="蘋果">
-    </div>
     
-    <p>點擊樹，讓蘋果掉下來！ 🍎</p>
-
+    <p id="output"></p>
+    
+    <!-- 幾何圖形的蘋果樹 -->
+    <div id="tree-container" onclick="dropApple()">
+        <div class="tree-leaves"></div>
+        <div class="tree-trunk"></div>
+        <div class="apple" id="apple"></div>
+    </div>
+    <p>點擊樹，讓蘋果掉下來！🍎</p>
+    
     <script>
         function updateClock() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString("zh-TW", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true });
-            document.getElementById("clock").innerText = "現在時間：" + timeString;
+            let now = new Date();
+            document.getElementById("clock").innerText = "現在時間：" + now.toLocaleTimeString();
         }
         setInterval(updateClock, 1000);
         updateClock();
@@ -84,7 +105,7 @@
         function showInfo() {
             document.getElementById("output").innerText = "萱萱是一個愛美劇、愛吃又討厭『優化』的台中人！夢想是去冰島！🥰";
         }
-
+        
         function randomQuote() {
             const quotes = [
                 "買鞋真的好難，寬腳人生太痛苦了🥲",
@@ -97,11 +118,29 @@
             let randomIndex = Math.floor(Math.random() * quotes.length);
             document.getElementById("output").innerText = quotes[randomIndex];
         }
-
+        
         function xuanIndex() {
             const index = Math.floor(Math.random() * 101);
-            document.getElementById("output").innerText = `今天的萱萱指數：${index}%！活力滿滿！💖`;
-    
+            let status = "";
+            if (index >= 80) {
+                status = "🌳 樹木繁茂，充滿活力！💖";
+            } else if (index >= 60) {
+                status = "🌿 枝葉茂盛，狀態不錯！";
+            } else if (index >= 40) {
+                status = "🍂 有點疲憊，需要灌溉！";
+            } else {
+                status = "🌱 有點枯萎，記得休息！";
+            }
+            document.getElementById("output").innerText = `今天的萱萱指數：${index}%！${status}`;
+        }
+        
+        function dropApple() {
+            let apple = document.getElementById("apple");
+            apple.style.top = "120px";
+            setTimeout(() => {
+                apple.style.top = "20px";
+            }, 2000);
+        }
     </script>
 </body>
 </html>
