@@ -58,6 +58,52 @@
             background: #ffebf0;
             margin-top: 5px;
             border-radius: 5px;
+            position: relative;
+        }
+        .delete-btn {
+            background: none;
+            border: none;
+            color: red;
+            cursor: pointer;
+            position: absolute;
+            right: 5px;
+            top: 5px;
+        }
+        /* 蘋果樹 */
+        #tree-container {
+            position: relative;
+            width: 100px;
+            height: 150px;
+            margin: 20px auto;
+        }
+        .tree-trunk {
+            width: 30px;
+            height: 80px;
+            background-color: saddlebrown;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .tree-leaves {
+            width: 100px;
+            height: 100px;
+            background-color: green;
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .apple {
+            width: 15px;
+            height: 15px;
+            background-color: red;
+            border-radius: 50%;
+            position: absolute;
+            top: 20px;
+            left: 45px;
+            transition: top 1s;
         }
     </style>
 </head>
@@ -72,9 +118,18 @@
     
     <p id="output"></p>
 
+    <!-- 蘋果樹 -->
+    <div id="tree-container" onclick="dropApple()">
+        <div class="tree-leaves"></div>
+        <div class="tree-trunk"></div>
+        <div class="apple" id="apple"></div>
+    </div>
+    <p>點擊樹，一起摘蘋果！🍎</p>
+
     <!-- 留言區 -->
     <div id="message-box">
         <h3>留言區</h3>
+        <input type="text" id="name-input" placeholder="你的名字..." />
         <input type="text" id="message-input" placeholder="輸入留言..." />
         <button id="send-btn">發送</button>
         <div id="messages"></div>
@@ -83,7 +138,7 @@
     <!-- Firebase 設定 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-        import { getDatabase, ref, push, set, onChildAdded } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
+        import { getDatabase, ref, push, set, remove, onChildAdded } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCeVz567cFsoGzBwXjflJqeuZcOUrUFInE",
@@ -100,62 +155,41 @@
         const messagesRef = ref(db, "messages");
 
         function sendMessage() {
-            const input = document.getElementById("message-input");
-            const message = input.value.trim();
-            if (message !== "") {
+            const name = document.getElementById("name-input").value.trim();
+            const message = document.getElementById("message-input").value.trim();
+            if (name !== "" && message !== "") {
                 const newMessageRef = push(messagesRef);
-                set(newMessageRef, message);
-                input.value = "";
+                set(newMessageRef, { name, message });
+                document.getElementById("message-input").value = "";
             }
         }
 
-        // 監聽 Firebase，當有新留言時更新畫面
+        function deleteMessage(messageId) {
+            remove(ref(db, `messages/${messageId}`));
+        }
+
         onChildAdded(messagesRef, (snapshot) => {
-            const message = snapshot.val();
-            const messageElem = document.createElement("p");
+            const data = snapshot.val();
+            const messageElem = document.createElement("div");
             messageElem.classList.add("message");
-            messageElem.innerText = message;
+            messageElem.innerHTML = `<strong>${data.name}:</strong> ${data.message} 
+                <button class="delete-btn" onclick="deleteMessage('${snapshot.key}')">❌</button>`;
             document.getElementById("messages").appendChild(messageElem);
         });
 
-        // 修正 `onclick` 無法讀取 `sendMessage`
         window.sendMessage = sendMessage;
+        window.deleteMessage = deleteMessage;
         document.getElementById("send-btn").addEventListener("click", sendMessage);
     </script>
 
-    <!-- 其他 JavaScript 功能 -->
+    <!-- 其他 JavaScript -->
     <script>
-        function updateClock() {
-            let now = new Date();
-            document.getElementById("clock").innerText = "現在時間：" + now.toLocaleTimeString();
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
-
-        function showInfo() {
-            document.getElementById("output").innerText = "萱萱是一個愛美劇、愛吃又討厭『優化』的台中人！夢想是去冰島！🥰";
-        }
-        
-        function randomQuote() {
-            const quotes = [
-                "買鞋真的好難，寬腳人生太痛苦了🥲",
-                "吃東西的快樂 > 一切",
-                "美劇萬歲！HIMYM、TBBT、Modern Family 是人生寶藏",
-                "我不是小孩，但為什麼一直想吃零食🤔",
-                "討厭優化這個詞，好中國😤",
-                "奶油粉絲團團長 🐶"
-            ];
-            let randomIndex = Math.floor(Math.random() * quotes.length);
-            document.getElementById("output").innerText = quotes[randomIndex];
-        }
-        
-        function xuanIndex() {
-            const index = Math.floor(Math.random() * 101);
-            let status = index >= 80 ? "🌳 樹木繁茂，充滿活力！💖" :
-                         index >= 60 ? "🌿 枝葉茂盛，狀態不錯！💖" :
-                         index >= 40 ? "🍂 有點疲憊，需要灌溉！💖" :
-                                       "🌱 有點枯萎，記得休息！💖";
-            document.getElementById("output").innerText = `今天的萱萱指數：${index}%！${status}`;
+        function dropApple() {
+            let apple = document.getElementById("apple");
+            apple.style.top = "120px";
+            setTimeout(() => {
+                apple.style.top = "20px";
+            }, 2000);
         }
     </script>
 </body>
