@@ -40,7 +40,7 @@
         /* 留言區 */
         #message-box {
             margin-top: 30px;
-            padding: 10px;
+            padding: 15px;
             background: white;
             border-radius: 10px;
             width: 80%;
@@ -54,20 +54,21 @@
             margin-top: 10px;
         }
         .message {
-            padding: 5px;
+            padding: 8px;
             background: #ffebf0;
             margin-top: 5px;
             border-radius: 5px;
             position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         .delete-btn {
             background: none;
             border: none;
             color: red;
             cursor: pointer;
-            position: absolute;
-            right: 5px;
-            top: 5px;
+            font-size: 14px;
         }
         /* 蘋果樹 */
         #tree-container {
@@ -124,14 +125,14 @@
         <div class="tree-trunk"></div>
         <div class="apple" id="apple"></div>
     </div>
-    <p>點擊樹，一起摘蘋果！🍎</p>
+    <p>點擊樹，摘蘋果給萱萱吃！🍎</p>
 
     <!-- 留言區 -->
     <div id="message-box">
         <h3>留言區</h3>
         <input type="text" id="name-input" placeholder="你的名字..." />
         <input type="text" id="message-input" placeholder="輸入留言..." />
-        <button id="send-btn">發送</button>
+        <button onclick="sendMessage()">發送</button>
         <div id="messages"></div>
     </div>
 
@@ -159,7 +160,7 @@
             const message = document.getElementById("message-input").value.trim();
             if (name !== "" && message !== "") {
                 const newMessageRef = push(messagesRef);
-                set(newMessageRef, { name, message });
+                set(newMessageRef, { name, message, id: newMessageRef.key });
                 document.getElementById("message-input").value = "";
             }
         }
@@ -173,13 +174,12 @@
             const messageElem = document.createElement("div");
             messageElem.classList.add("message");
             messageElem.innerHTML = `<strong>${data.name}:</strong> ${data.message} 
-                <button class="delete-btn" onclick="deleteMessage('${snapshot.key}')">❌</button>`;
+                <button class="delete-btn" onclick="deleteMessage('${data.id}')">❌</button>`;
             document.getElementById("messages").appendChild(messageElem);
         });
 
         window.sendMessage = sendMessage;
         window.deleteMessage = deleteMessage;
-        document.getElementById("send-btn").addEventListener("click", sendMessage);
     </script>
 
     <!-- 其他 JavaScript -->
