@@ -76,18 +76,24 @@
         /* 留言區 */
         #message-box {
             margin-top: 30px;
-            padding: 15px;
+            padding: 10px;
             background: white;
-            border: 1px solid #ff69b4;
             border-radius: 10px;
-            width: 300px;
+            width: 80%;
+            max-width: 400px;
             margin-left: auto;
             margin-right: auto;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         #messages {
             text-align: left;
-            max-height: 200px;
-            overflow-y: auto;
+            margin-top: 10px;
+        }
+        .message {
+            padding: 5px;
+            background: #ffebf0;
+            margin-top: 5px;
+            border-radius: 5px;
         }
     </style>
 </head>
@@ -101,7 +107,7 @@
     <button onclick="xuanIndex()">今天的萱萱指數</button>
     
     <p id="output"></p>
-    
+
     <!-- 幾何圖形的蘋果樹 -->
     <div id="tree-container" onclick="dropApple()">
         <div class="tree-leaves"></div>
@@ -118,91 +124,84 @@
         <div id="messages"></div>
     </div>
 
-    <!-- Firebase SDK -->
     <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-      import { getDatabase, ref, push, set, onChildAdded, remove } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
+        import { getDatabase, ref, push, set, onChildAdded } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
 
-      const firebaseConfig = {
-        apiKey: "AIzaSyCeVz567cFsoGzBwXjflJqeuZcOUrUFInE",
-        authDomain: "xuanxuan-website.firebaseapp.com",
-        databaseURL: "https://xuanxuan-website-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "xuanxuan-website",
-        storageBucket: "xuanxuan-website.firebasestorage.app",
-        messagingSenderId: "711868711442",
-        appId: "1:711868711442:web:72140bba056c1690dccecb"
-      };
+        const firebaseConfig = {
+            apiKey: "AIzaSyCeVz567cFsoGzBwXjflJqeuZcOUrUFInE",
+            authDomain: "xuanxuan-website.firebaseapp.com",
+            databaseURL: "https://xuanxuan-website-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "xuanxuan-website",
+            storageBucket: "xuanxuan-website.firebasestorage.app",
+            messagingSenderId: "711868711442",
+            appId: "1:711868711442:web:72140bba056c1690dccecb"
+        };
 
-      const app = initializeApp(firebaseConfig);
-      const db = getDatabase(app);
-      const messagesRef = ref(db, "messages");
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const messagesRef = ref(db, "messages");
 
-      function sendMessage() {
-          const input = document.getElementById("message-input");
-          const message = input.value.trim();
-          if (message !== "") {
-              const newMessageRef = push(messagesRef);
-              set(newMessageRef, message);
-              input.value = "";
-          }
-      }
+        function sendMessage() {
+            const input = document.getElementById("message-input");
+            const message = input.value.trim();
+            if (message !== "") {
+                const newMessageRef = push(messagesRef);
+                set(newMessageRef, message);
+                input.value = "";
+            }
+        }
 
-      onChildAdded(messagesRef, (snapshot) => {
-          const message = snapshot.val();
-          const messageElem = document.createElement("p");
-          messageElem.innerText = message;
-          document.getElementById("messages").appendChild(messageElem);
-      });
+        onChildAdded(messagesRef, (snapshot) => {
+            const message = snapshot.val();
+            const messageElem = document.createElement("p");
+            messageElem.classList.add("message");
+            messageElem.innerText = message;
+            document.getElementById("messages").appendChild(messageElem);
+        });
     </script>
 
-    <!-- JavaScript 互動功能 -->
     <script>
-      function updateClock() {
-          let now = new Date();
-          document.getElementById("clock").innerText = "現在時間：" + now.toLocaleTimeString();
-      }
-      setInterval(updateClock, 1000);
-      updateClock();
+        function updateClock() {
+            let now = new Date();
+            document.getElementById("clock").innerText = "現在時間：" + now.toLocaleTimeString();
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
 
-      function showInfo() {
-          document.getElementById("output").innerText = "萱萱是一個愛美劇、愛吃又討厭『優化』的台中人！夢想是去冰島！🥰";
-      }
+        function showInfo() {
+            document.getElementById("output").innerText = "萱萱是一個愛美劇、愛吃又討厭『優化』的台中人！夢想是去冰島！🥰";
+        }
+        
+        function randomQuote() {
+            const quotes = [
+                "買鞋真的好難，寬腳人生太痛苦了🥲",
+                "吃東西的快樂 > 一切",
+                "美劇萬歲！HIMYM、TBBT、Modern Family 是人生寶藏",
+                "我不是小孩，但為什麼一直想吃零食🤔",
+                "討厭優化這個詞，好中國😤",
+                "奶油 > 全世界 🐶"
+            ];
+            let randomIndex = Math.floor(Math.random() * quotes.length);
+            document.getElementById("output").innerText = quotes[randomIndex];
+        }
+        
+        function xuanIndex() {
+            const index = Math.floor(Math.random() * 101);
+            let status = index >= 80 ? "🌳 樹木繁茂，充滿活力！💖" :
+                         index >= 60 ? "🌿 枝葉茂盛，狀態不錯！" :
+                         index >= 40 ? "🍂 有點疲憊，需要灌溉！" :
+                                       "🌱 有點枯萎，記得休息！";
+            document.getElementById("output").innerText = `今天的萱萱指數：${index}%！${status}`;
+        }
 
-      function randomQuote() {
-          const quotes = [
-              "買鞋真的好難，寬腳人生太痛苦了🥲",
-              "吃東西的快樂 > 一切",
-              "美劇萬歲！HIMYM、TBBT、Modern Family 是人生寶藏",
-              "我不是小孩，但為什麼一直想吃零食🤔",
-              "討厭優化這個詞，好中國😤",
-              "奶油 > 全世界 🐶"
-          ];
-          let randomIndex = Math.floor(Math.random() * quotes.length);
-          document.getElementById("output").innerText = quotes[randomIndex];
-      }
-
-      function xuanIndex() {
-          const index = Math.floor(Math.random() * 101);
-          let status = "";
-          if (index >= 80) {
-              status = "🌳 樹木繁茂，充滿活力！💖";
-          } else if (index >= 60) {
-              status = "🌿 枝葉茂盛，狀態不錯！";
-          } else if (index >= 40) {
-              status = "🍂 有點疲憊，需要灌溉！";
-          } else {
-              status = "🌱 有點枯萎，記得休息！";
-          }
-          document.getElementById("output").innerText = `今天的萱萱指數：${index}%！${status}`;
-      }
-
-      function dropApple() {
-          let apple = document.getElementById("apple");
-          apple.style.top = "120px";
-          setTimeout(() => {
-              apple.style.top = "20px";
-          }, 2000);
-      }
+        function dropApple() {
+            let apple = document.getElementById("apple");
+            apple.style.top = "120px";
+            setTimeout(() => {
+                apple.style.top = "20px";
+            }, 2000);
+        }
     </script>
 </body>
 </html>
