@@ -73,6 +73,22 @@
             left: 45px;
             transition: top 1s;
         }
+        /* 留言區 */
+        #message-box {
+            margin-top: 30px;
+            padding: 15px;
+            background: white;
+            border: 1px solid #ff69b4;
+            border-radius: 10px;
+            width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        #messages {
+            text-align: left;
+            max-height: 200px;
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body>
@@ -94,10 +110,18 @@
     </div>
     <p>點擊樹，讓蘋果掉下來！🍎</p>
 
+    <!-- 留言區 -->
+    <div id="message-box">
+        <h3>留言區</h3>
+        <input type="text" id="message-input" placeholder="輸入留言..." />
+        <button onclick="sendMessage()">發送</button>
+        <div id="messages"></div>
+    </div>
+
     <!-- Firebase SDK -->
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-      import { getDatabase, ref, push, set, onChildAdded } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
+      import { getDatabase, ref, push, set, onChildAdded, remove } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
 
       const firebaseConfig = {
         apiKey: "AIzaSyCeVz567cFsoGzBwXjflJqeuZcOUrUFInE",
@@ -111,6 +135,24 @@
 
       const app = initializeApp(firebaseConfig);
       const db = getDatabase(app);
+      const messagesRef = ref(db, "messages");
+
+      function sendMessage() {
+          const input = document.getElementById("message-input");
+          const message = input.value.trim();
+          if (message !== "") {
+              const newMessageRef = push(messagesRef);
+              set(newMessageRef, message);
+              input.value = "";
+          }
+      }
+
+      onChildAdded(messagesRef, (snapshot) => {
+          const message = snapshot.val();
+          const messageElem = document.createElement("p");
+          messageElem.innerText = message;
+          document.getElementById("messages").appendChild(messageElem);
+      });
     </script>
 
     <!-- JavaScript 互動功能 -->
