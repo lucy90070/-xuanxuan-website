@@ -124,7 +124,7 @@
         <div class="tree-trunk"></div>
         <div class="apple" id="apple"></div>
     </div>
-    <p>點擊樹，讓蘋果掉下來！🍎</p>
+    <p>點擊樹，摘蘋果給萱萱吃！🍎</p>
 
     <!-- 留言區 -->
     <div id="message-box">
@@ -192,11 +192,17 @@
     <!-- 其他 JavaScript -->
     <script>
         function showInfo() {
-            document.getElementById("output").innerText = "萱萱是一個愛美劇、愛吃又討厭『優化』的台中人！夢想是去冰島！🥰";
+            document.getElementById("output").innerText = "萱萱是一個愛美劇、愛吃美食又討厭『優化』的台中人！夢想是去冰島！🥰";
         }
 
         function randomQuote() {
-            const quotes = ["買鞋好難！", "吃東西快樂 > 一切", "奶油 > 全世界 🐶"];
+            const quotes = [
+                "買鞋真的好難，寬腳人生太痛苦了🥲", 
+                "美劇萬歲！TBBT、HIMYM、Modern Family 是人生寶藏", 
+                "吃東西快樂 > 一切", 
+                "我不是小孩，但為什麼一直想吃零食🤔",
+                "奶油粉絲團團長 🐶"
+            ];
             let randomIndex = Math.floor(Math.random() * quotes.length);
             document.getElementById("output").innerText = quotes[randomIndex];
         }
@@ -208,11 +214,11 @@
     if (index >= 80) {
         status = "🌳 樹木繁茂，充滿活力！💖";
     } else if (index >= 60) {
-        status = "🌿 枝葉茂盛，狀態不錯！";
+        status = "🌿 枝葉茂盛，狀態不錯！💖";
     } else if (index >= 40) {
-        status = "🍂 有點疲憊，需要灌溉！";
+        status = "🍂 有點疲憊，需要灌溉！💖";
     } else {
-        status = "🌱 有點枯萎，記得休息！";
+        status = "🌱 有點枯萎，記得休息！💖";
     }
 
     document.getElementById("output").innerText = `今天的萱萱指數：${index}%！${status}`;
