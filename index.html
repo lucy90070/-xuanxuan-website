@@ -18,6 +18,7 @@
       background-color: var(--background-color);
       padding: 50px;
       transition: background-color 0.3s, color 0.3s;
+      overflow: hidden; /* 防止雪花產生捲軸 */
     }
     h1 {
       color: var(--primary-color);
@@ -132,36 +133,36 @@
       --primary-hover: #ffa6c9;
       --message-bg: #555;
     }
-
-/* 1) 定義下雪 / 花瓣飄落動畫 */
-@keyframes snowFall {
-  0% {
-    transform: translateY(-50px);
-    opacity: 0;
-  }
-  10% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(100vh);
-    opacity: 0;
-  }
-}
-
-/* 2) 雪花/花瓣的基本樣式 */
-.snow {
-  position: absolute;
-  top: 0;
-  /* left 屬性會用 JavaScript 動態設定，所以這裡先不用固定數值 */
-  width: 20px;           /* 可以改大一點，如果想要更明顯 */
-  height: 20px;
-  background-color: white; 
-  border-radius: 50%;    
-  animation-name: snowFall;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite; /* 無限次循環 */
-}
-
+    
+    /* =========================================
+       以下為下雪/花瓣飄落動畫的 CSS
+    ========================================= */
+    @keyframes snowFall {
+      0% {
+        transform: translateY(-50px);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh);
+        opacity: 0;
+      }
+    }
+    .snow {
+      position: absolute;
+      top: 0;
+      /* left 會由 JavaScript 動態設定 */
+      width: 20px;      /* 調整大小讓雪花/花瓣更明顯 */
+      height: 20px;
+      background-color: white; /* 若覺得不夠明顯，可換成其他顏色 */
+      border-radius: 50%;
+      animation-name: snowFall;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+    
     /* 響應式調整 */
     @media (max-width: 600px) {
       body {
@@ -204,10 +205,36 @@
     <div id="messages"></div>
   </div>
 
-  <!-- **單一 script**：Firebase + 所有功能都放這裡 -->
+  <!-- 以下的下雪/花瓣飄落功能是由 JavaScript 動態生成 -->
   <script>
     /******************************************************
-     * 1. Firebase 初始化 + 留言功能
+     * 1. 下雪/花瓣飄落功能（獨立於 Firebase 部分）
+     ******************************************************/
+    function startSnowing(count = 50) {
+      for (let i = 0; i < count; i++) {
+        // 建立一個 <div class="snow"></div>
+        const snow = document.createElement("div");
+        snow.classList.add("snow");
+        // 隨機水平位置（0 ~ 100vw）
+        const randomLeft = Math.random() * 100;
+        snow.style.left = randomLeft + "vw";
+        // 隨機動畫延遲（0 ~ 5秒）
+        const randomDelay = Math.random() * 5;
+        snow.style.animationDelay = randomDelay + "s";
+        // 隨機動畫時長（5 ~ 10秒）
+        const randomDuration = 5 + Math.random() * 5;
+        snow.style.animationDuration = randomDuration + "s";
+        // 加入到 body 中
+        document.body.appendChild(snow);
+      }
+    }
+    // 當 DOM 內容載入完成後執行下雪功能
+    window.addEventListener("DOMContentLoaded", () => {
+      startSnowing(50); // 產生 50 個雪花/花瓣
+    });
+
+    /******************************************************
+     * 2. Firebase 初始化 + 留言功能（動態匯入）
      ******************************************************/
     import('https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js').then(({ initializeApp }) => {
       import('https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js').then((dbModule) => {
@@ -226,40 +253,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const messagesRef = ref(db, "messages");
-
-        /**
- * 這個函式會一次生成 count 個「雪花 / 花瓣」元素，
- * 並隨機設定它們的水平位置(left)、動畫延遲(animationDelay)、
- * 動畫時長(animationDuration)，讓每個雪花都獨立飄落。
- */
-function startSnowing(count = 50) {
-  for (let i = 0; i < count; i++) {
-    // 建立一個 <div class="snow"></div>
-    const snow = document.createElement("div");
-    snow.classList.add("snow");
-
-    // 1. 隨機水平位置 (0~100vw)
-    const randomLeft = Math.random() * 100; // 0 ~ 100
-    snow.style.left = randomLeft + "vw";
-
-    // 2. 隨機動畫延遲 (0~5 秒)
-    const randomDelay = Math.random() * 5; 
-    snow.style.animationDelay = randomDelay + "s";
-
-    // 3. 隨機動畫時長 (5~10 秒)
-    const randomDuration = 5 + Math.random() * 5; 
-    snow.style.animationDuration = randomDuration + "s";
-
-    // 放進 body（或你想要的容器）
-    document.body.appendChild(snow);
-  }
-}
-
-// 等網頁載入完成後開始飄雪
-window.addEventListener("load", () => {
-  startSnowing(50); // 產生 50 個雪花
-});
-
 
         // 發送留言
         function sendMessage() {
@@ -309,9 +302,8 @@ window.addEventListener("load", () => {
     });
 
     /******************************************************
-     * 2. 其他功能：報時、萱萱金句、蘋果掉落、切換主題
+     * 3. 其他功能：報時、萱萱金句、蘋果掉落、切換主題
      ******************************************************/
-
     // 報時功能
     function updateClock() {
       let now = new Date();
@@ -319,23 +311,23 @@ window.addEventListener("load", () => {
       let minutes = now.getMinutes();
       let seconds = now.getSeconds();
       let ampm = hours >= 12 ? "PM" : "AM";
-
+      
       hours = hours % 12 || 12; // 12 小時制
       minutes = minutes < 10 ? "0" + minutes : minutes;
       seconds = seconds < 10 ? "0" + seconds : seconds;
-
+  
       let timeString = `現在時間：${hours}:${minutes}:${seconds} ${ampm}`;
       document.getElementById("clock").innerText = timeString;
     }
     setInterval(updateClock, 1000);
     updateClock();
-
+  
     // 顯示關於萱萱
     function showInfo() {
       document.getElementById("output").innerText =
         "萱萱是一個愛美劇、愛吃美食又討厭『優化』的台中人！夢想是去冰島！👽";
     }
-
+  
     // 隨機萱萱金句
     function randomQuote() {
       const quotes = [
@@ -350,12 +342,12 @@ window.addEventListener("load", () => {
       let randomIndex = Math.floor(Math.random() * quotes.length);
       document.getElementById("output").innerText = quotes[randomIndex];
     }
-
+  
     // 今日萱萱指數
     function xuanIndex() {
       const index = Math.floor(Math.random() * 101); // 0~100
       let status = "";
-
+  
       if (index >= 80) {
         status = "🌳 樹木繁茂，充滿活力！💖";
       } else if (index >= 60) {
@@ -365,11 +357,11 @@ window.addEventListener("load", () => {
       } else {
         status = "🌱 有點枯萎，記得休息！💖";
       }
-
+  
       document.getElementById("output").innerText =
         `今天的萱萱指數：${index}%！${status}`;
     }
-
+  
     // 蘋果掉落（用 CSS 動畫）
     function dropApple() {
       const apple = document.getElementById("apple");
@@ -380,12 +372,12 @@ window.addEventListener("load", () => {
         }, { once: true });
       }
     }
-
+  
     // 切換主題（亮 / 暗模式）
     function toggleTheme() {
       document.body.classList.toggle("dark-mode");
     }
-
+  
     // 綁定按鈕事件
     document.getElementById("btn-info").addEventListener("click", showInfo);
     document.getElementById("btn-quote").addEventListener("click", randomQuote);
