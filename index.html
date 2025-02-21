@@ -133,32 +133,34 @@
       --message-bg: #555;
     }
 
-    /* =============== 以下為「小花掉落」的關鍵程式碼 =============== */
-    /* 定義掉落動畫 */
-    @keyframes flowerFall {
-      0% {
-        transform: translateY(-50px) rotate(0deg);
-        opacity: 0;
-      }
-      20% {
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(600px) rotate(360deg);
-        opacity: 0;
-      }
-    }
-    /* 小花樣式 */
-    .flower {
-      position: absolute; /* 絕對定位，才能自由飄落 */
-      top: 0;
-      left: 50%;
-      width: 20px;
-      height: 20px;
-      background: white;
-      border-radius: 50%; /* 用圓形模擬花朵 */
-      animation: flowerFall 5s linear infinite;
-    }
+/* 1) 定義下雪 / 花瓣飄落動畫 */
+@keyframes snowFall {
+  0% {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+
+/* 2) 雪花/花瓣的基本樣式 */
+.snow {
+  position: absolute;
+  top: 0;
+  /* left 屬性會用 JavaScript 動態設定，所以這裡先不用固定數值 */
+  width: 10px;           /* 可以改大一點，如果想要更明顯 */
+  height: 10px;
+  background-color: white; 
+  border-radius: 50%;    
+  animation-name: snowFall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite; /* 無限次循環 */
+}
 
     /* 響應式調整 */
     @media (max-width: 600px) {
@@ -229,6 +231,40 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const messagesRef = ref(db, "messages");
+
+        /**
+ * 這個函式會一次生成 count 個「雪花 / 花瓣」元素，
+ * 並隨機設定它們的水平位置(left)、動畫延遲(animationDelay)、
+ * 動畫時長(animationDuration)，讓每個雪花都獨立飄落。
+ */
+function startSnowing(count = 50) {
+  for (let i = 0; i < count; i++) {
+    // 建立一個 <div class="snow"></div>
+    const snow = document.createElement("div");
+    snow.classList.add("snow");
+
+    // 1. 隨機水平位置 (0~100vw)
+    const randomLeft = Math.random() * 100; // 0 ~ 100
+    snow.style.left = randomLeft + "vw";
+
+    // 2. 隨機動畫延遲 (0~5 秒)
+    const randomDelay = Math.random() * 5; 
+    snow.style.animationDelay = randomDelay + "s";
+
+    // 3. 隨機動畫時長 (5~10 秒)
+    const randomDuration = 5 + Math.random() * 5; 
+    snow.style.animationDuration = randomDuration + "s";
+
+    // 放進 body（或你想要的容器）
+    document.body.appendChild(snow);
+  }
+}
+
+// 等網頁載入完成後開始飄雪
+window.addEventListener("load", () => {
+  startSnowing(50); // 產生 50 個雪花
+});
+
 
         // 發送留言
         function sendMessage() {
