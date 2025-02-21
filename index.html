@@ -132,6 +132,34 @@
       --primary-hover: #ffa6c9;
       --message-bg: #555;
     }
+
+    /* =============== 以下為「小花掉落」的關鍵程式碼 =============== */
+    /* 定義掉落動畫 */
+    @keyframes flowerFall {
+      0% {
+        transform: translateY(-50px) rotate(0deg);
+        opacity: 0;
+      }
+      20% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(600px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+    /* 小花樣式 */
+    .flower {
+      position: absolute; /* 絕對定位，才能自由飄落 */
+      top: 0;
+      left: 50%;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%; /* 用圓形模擬花朵 */
+      animation: flowerFall 5s linear infinite;
+    }
+
     /* 響應式調整 */
     @media (max-width: 600px) {
       body {
@@ -174,13 +202,16 @@
     <div id="messages"></div>
   </div>
 
+  <!-- 這裡放上小花：可以放多個，改 left 與 animation-delay 讓花朵分散 -->
+  <div class="flower" style="left: 20%; animation-delay: 0s;"></div>
+  <div class="flower" style="left: 50%; animation-delay: 1s;"></div>
+  <div class="flower" style="left: 80%; animation-delay: 2s;"></div>
+
   <!-- **單一 script**：Firebase + 所有功能都放這裡 -->
   <script>
     /******************************************************
      * 1. Firebase 初始化 + 留言功能
      ******************************************************/
-    // 因為要在同一個 <script>，我們用「動態 import」來載入 Firebase 模組
-    // 這樣就不需要 <script type="module"> 了
     import('https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js').then(({ initializeApp }) => {
       import('https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js').then((dbModule) => {
         const { getDatabase, ref, push, set, remove, onChildAdded, onChildRemoved } = dbModule;
