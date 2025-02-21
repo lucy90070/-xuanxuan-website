@@ -153,8 +153,8 @@
   position: absolute;
   top: 0;
   /* left 屬性會用 JavaScript 動態設定，所以這裡先不用固定數值 */
-  width: 10px;           /* 可以改大一點，如果想要更明顯 */
-  height: 10px;
+  width: 20px;           /* 可以改大一點，如果想要更明顯 */
+  height: 20px;
   background-color: white; 
   border-radius: 50%;    
   animation-name: snowFall;
@@ -203,11 +203,6 @@
     <button id="btn-send">發送</button>
     <div id="messages"></div>
   </div>
-
-  <!-- 這裡放上小花：可以放多個，改 left 與 animation-delay 讓花朵分散 -->
-  <div class="flower" style="left: 20%; animation-delay: 0s;"></div>
-  <div class="flower" style="left: 50%; animation-delay: 1s;"></div>
-  <div class="flower" style="left: 80%; animation-delay: 2s;"></div>
 
   <!-- **單一 script**：Firebase + 所有功能都放這裡 -->
   <script>
