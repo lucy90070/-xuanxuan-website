@@ -1,319 +1,335 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xuanxuan Interactive</title>
-    <style>
-        :root {
-            --primary-color: #ff69b4;
-            --primary-hover: #ff1493;
-            --background-color: #fff0f5;
-            --text-color: #333;
-            --message-bg: #ffebf0;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: var(--background-color);
-            padding: 50px;
-            transition: background-color 0.3s, color 0.3s;
-        }
-        h1 {
-            color: var(--primary-color);
-        }
-        button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            margin: 10px;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: var(--primary-hover);
-        }
-        #output {
-            margin-top: 20px;
-            font-size: 18px;
-            color: var(--text-color);
-        }
-        #clock {
-            font-size: 20px;
-            margin-top: 10px;
-            color: var(--primary-hover);
-        }
-        /* 留言區 */
-        #message-box {
-            margin-top: 30px;
-            padding: 15px;
-            background: white;
-            border-radius: 10px;
-            width: 80%;
-            max-width: 400px;
-            margin-left: auto;
-            margin-right: auto;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        #messages {
-            text-align: left;
-            margin-top: 10px;
-        }
-        .message {
-            padding: 8px;
-            background: var(--message-bg);
-            margin-top: 5px;
-            border-radius: 5px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 15px;
-        }
-        .delete-btn {
-            background: none;
-            border: none;
-            color: red;
-            cursor: pointer;
-            font-size: 15px;
-        }
-        /* 蘋果樹 */
-        #tree-container {
-            position: relative;
-            width: 100px;
-            height: 150px;
-            margin: 20px auto;
-            cursor: pointer;
-        }
-        .tree-trunk {
-            width: 30px;
-            height: 80px;
-            background-color: saddlebrown;
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        .tree-leaves {
-            width: 100px;
-            height: 100px;
-            background-color: green;
-            border-radius: 50%;
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        .apple {
-            width: 15px;
-            height: 15px;
-            background-color: red;
-            border-radius: 50%;
-            position: absolute;
-            top: 20px;
-            left: 45px;
-        }
-        /* CSS 動畫：蘋果掉落 */
-        @keyframes drop {
-            0% { top: 20px; }
-            50% { top: 120px; }
-            100% { top: 20px; }
-        }
-        .drop {
-            animation: drop 2s ease-in-out;
-        }
-        /* Dark Mode 設定 */
-        .dark-mode {
-            --background-color: #333;
-            --text-color: #eee;
-            --primary-color: #ffb6c1;
-            --primary-hover: #ffa6c9;
-            --message-bg: #555;
-        }
-        /* 響應式調整 */
-        @media (max-width: 600px) {
-            body {
-                padding: 20px;
-            }
-            #message-box {
-                width: 95%;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Xuanxuan Interactive</title>
+  <style>
+    :root {
+      --primary-color: #ff69b4;
+      --primary-hover: #ff1493;
+      --background-color: #fff0f5;
+      --text-color: #333;
+      --message-bg: #ffebf0;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: var(--background-color);
+      padding: 50px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    h1 {
+      color: var(--primary-color);
+    }
+    button {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: var(--primary-hover);
+    }
+    #output {
+      margin-top: 20px;
+      font-size: 18px;
+      color: var(--text-color);
+    }
+    #clock {
+      font-size: 20px;
+      margin-top: 10px;
+      color: var(--primary-hover);
+    }
+    /* 留言區 */
+    #message-box {
+      margin-top: 30px;
+      padding: 15px;
+      background: white;
+      border-radius: 10px;
+      width: 80%;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    #messages {
+      text-align: left;
+      margin-top: 10px;
+    }
+    .message {
+      padding: 8px;
+      background: var(--message-bg);
+      margin-top: 5px;
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 15px;
+    }
+    .delete-btn {
+      background: none;
+      border: none;
+      color: red;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    /* 蘋果樹 */
+    #tree-container {
+      position: relative;
+      width: 100px;
+      height: 150px;
+      margin: 20px auto;
+      cursor: pointer;
+    }
+    .tree-trunk {
+      width: 30px;
+      height: 80px;
+      background-color: saddlebrown;
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .tree-leaves {
+      width: 100px;
+      height: 100px;
+      background-color: green;
+      border-radius: 50%;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .apple {
+      width: 15px;
+      height: 15px;
+      background-color: red;
+      border-radius: 50%;
+      position: absolute;
+      top: 20px;
+      left: 45px;
+    }
+    /* CSS 動畫：蘋果掉落 */
+    @keyframes drop {
+      0% { top: 20px; }
+      50% { top: 120px; }
+      100% { top: 20px; }
+    }
+    .drop {
+      animation: drop 2s ease-in-out;
+    }
+    /* Dark Mode 設定 */
+    .dark-mode {
+      --background-color: #333;
+      --text-color: #eee;
+      --primary-color: #ffb6c1;
+      --primary-hover: #ffa6c9;
+      --message-bg: #555;
+    }
+    /* 響應式調整 */
+    @media (max-width: 600px) {
+      body {
+        padding: 20px;
+      }
+      #message-box {
+        width: 95%;
+      }
+    }
+  </style>
 </head>
 <body>
-    <h1>歡迎來認識萱萱！</h1>
-    <p>點擊下方按鈕，探索關於萱萱的小秘密～</p>
-    <p id="clock"></p>
-    
-    <div id="button-container">
-        <button id="btn-info">關於萱萱</button>
-        <button id="btn-quote">萱萱金句</button>
-        <button id="btn-index">今日萱萱指數</button>
-        <button id="btn-theme">切換主題</button>
-    </div>
-    
-    <p id="output"></p>
+  <h1>歡迎來認識萱萱！</h1>
+  <p>點擊下方按鈕，探索關於萱萱的小秘密～</p>
+  <p id="clock"></p>
 
-    <!-- 蘋果樹 -->
-    <div id="tree-container">
-        <div class="tree-leaves"></div>
-        <div class="tree-trunk"></div>
-        <div class="apple" id="apple"></div>
-    </div>
-    <p>點擊樹，摘蘋果給萱萱吃！🍎</p>
+  <div id="button-container">
+    <button id="btn-info">關於萱萱</button>
+    <button id="btn-quote">萱萱金句</button>
+    <button id="btn-index">今日萱萱指數</button>
+    <button id="btn-theme">切換主題</button>
+  </div>
 
-    <!-- 留言區 -->
-    <div id="message-box">
-        <h3>留言區</h3>
-        <input type="text" id="name-input" placeholder="你的名字..." />
-        <input type="text" id="message-input" placeholder="輸入留言..." />
-        <button id="btn-send">發送</button>
-        <div id="messages"></div>
-    </div>
+  <p id="output"></p>
 
-    <!-- Firebase 設定 -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-        import { getDatabase, ref, push, set, remove, onChildAdded, onChildRemoved } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
+  <!-- 蘋果樹 -->
+  <div id="tree-container">
+    <div class="tree-leaves"></div>
+    <div class="tree-trunk"></div>
+    <div class="apple" id="apple"></div>
+  </div>
+  <p>點擊樹，摘蘋果給萱萱吃！🍎</p>
+
+  <!-- 留言區 -->
+  <div id="message-box">
+    <h3>留言區</h3>
+    <input type="text" id="name-input" placeholder="你的名字..." />
+    <input type="text" id="message-input" placeholder="輸入留言..." />
+    <button id="btn-send">發送</button>
+    <div id="messages"></div>
+  </div>
+
+  <!-- **單一 script**：Firebase + 所有功能都放這裡 -->
+  <script>
+    /******************************************************
+     * 1. Firebase 初始化 + 留言功能
+     ******************************************************/
+    // 因為要在同一個 <script>，我們用「動態 import」來載入 Firebase 模組
+    // 這樣就不需要 <script type="module"> 了
+    import('https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js').then(({ initializeApp }) => {
+      import('https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js').then((dbModule) => {
+        const { getDatabase, ref, push, set, remove, onChildAdded, onChildRemoved } = dbModule;
 
         const firebaseConfig = {
-            apiKey: "AIzaSyCeVz567cFsoGzBwXjflJqeuZcOUrUFInE",
-            authDomain: "xuanxuan-website.firebaseapp.com",
-            databaseURL: "https://xuanxuan-website-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "xuanxuan-website",
-            storageBucket: "xuanxuan-website.firebasestorage.app",
-            messagingSenderId: "711868711442",
-            appId: "1:711868711442:web:72140bba056c1690dccecb"
+          apiKey: "AIzaSyCeVz567cFsoGzBwXjflJqeuZcOUrUFInE",
+          authDomain: "xuanxuan-website.firebaseapp.com",
+          databaseURL: "https://xuanxuan-website-default-rtdb.asia-southeast1.firebasedatabase.app",
+          projectId: "xuanxuan-website",
+          storageBucket: "xuanxuan-website.firebasestorage.app",
+          messagingSenderId: "711868711442",
+          appId: "1:711868711442:web:72140bba056c1690dccecb"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const messagesRef = ref(db, "messages");
 
+        // 發送留言
         function sendMessage() {
-            const name = document.getElementById("name-input").value.trim();
-            const message = document.getElementById("message-input").value.trim();
-            if (name !== "" && message !== "") {
-                const newMessageRef = push(messagesRef);
-                set(newMessageRef, { name, message, id: newMessageRef.key })
-                .catch(error => console.error("發送留言錯誤:", error));
-                document.getElementById("message-input").value = "";
-            }
+          const name = document.getElementById("name-input").value.trim();
+          const message = document.getElementById("message-input").value.trim();
+          if (name !== "" && message !== "") {
+            const newMessageRef = push(messagesRef);
+            set(newMessageRef, { name, message, id: newMessageRef.key })
+              .catch(error => console.error("發送留言錯誤:", error));
+            document.getElementById("message-input").value = "";
+          }
         }
 
+        // 刪除留言
         function deleteMessage(messageId) {
-            remove(ref(db, `messages/${messageId}`))
+          remove(ref(db, `messages/${messageId}`))
             .catch(error => console.error("刪除留言錯誤:", error));
         }
 
+        // 監聽新留言
         onChildAdded(messagesRef, (snapshot) => {
-            const data = snapshot.val();
-            const messageElem = document.createElement("div");
-            messageElem.classList.add("message");
-            messageElem.setAttribute("id", data.id);
-            messageElem.innerHTML = `<strong>${data.name}:</strong> ${data.message} 
-                <button class="delete-btn" data-id="${data.id}">❌</button>`;
-            document.getElementById("messages").appendChild(messageElem);
+          const data = snapshot.val();
+          const messageElem = document.createElement("div");
+          messageElem.classList.add("message");
+          messageElem.setAttribute("id", data.id);
+          messageElem.innerHTML = `<strong>${data.name}:</strong> ${data.message} 
+            <button class="delete-btn" data-id="${data.id}">❌</button>`;
+          document.getElementById("messages").appendChild(messageElem);
 
-            // 為刪除按鈕綁定事件
-            messageElem.querySelector(".delete-btn").addEventListener("click", () => {
-                deleteMessage(data.id);
-            });
+          // 綁定刪除事件
+          messageElem.querySelector(".delete-btn").addEventListener("click", () => {
+            deleteMessage(data.id);
+          });
         });
 
+        // 監聽刪除留言
         onChildRemoved(messagesRef, (snapshot) => {
-            const messageElem = document.getElementById(snapshot.key);
-            if (messageElem) {
-                messageElem.remove();
-            }
+          const messageElem = document.getElementById(snapshot.key);
+          if (messageElem) {
+            messageElem.remove();
+          }
         });
 
-        // 為方便除錯，可將部分方法掛在 window 上
-        window.sendMessage = sendMessage;
-        window.deleteMessage = deleteMessage;
-    </script>
-
-    <!-- 其他 JavaScript -->
-    <script>
-        // 報時功能
-        function updateClock() {
-            let now = new Date();
-            let hours = now.getHours();
-            let minutes = now.getMinutes();
-            let seconds = now.getSeconds();
-            let ampm = hours >= 12 ? "PM" : "AM";
-            
-            hours = hours % 12 || 12; // 12 小時制
-            minutes = minutes < 10 ? "0" + minutes : minutes;
-            seconds = seconds < 10 ? "0" + seconds : seconds;
-        
-            let timeString = `現在時間：${hours}:${minutes}:${seconds} ${ampm}`;
-            document.getElementById("clock").innerText = timeString;
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
-
-        // 綁定各功能按鈕事件
-        document.getElementById("btn-info").addEventListener("click", showInfo);
-        document.getElementById("btn-quote").addEventListener("click", randomQuote);
-        document.getElementById("btn-index").addEventListener("click", xuanIndex);
+        // 綁定發送按鈕
         document.getElementById("btn-send").addEventListener("click", sendMessage);
-        document.getElementById("tree-container").addEventListener("click", dropApple);
-        document.getElementById("btn-theme").addEventListener("click", toggleTheme);
+      });
+    });
 
-        function showInfo() {
-            document.getElementById("output").innerText = "萱萱是一個愛美劇、愛吃美食又討厭『優化』的台中人！夢想是去冰島！👽";
-        }
+    /******************************************************
+     * 2. 其他功能：報時、萱萱金句、蘋果掉落、切換主題
+     ******************************************************/
 
-        function randomQuote() {
-            const quotes = [
-                "買鞋真的好難，寬腳人生太痛苦了🥲", 
-                "美劇萬歲！TBBT、HIMYM、Modern Family 是人生寶藏", 
-                "時薪25元買得起Iphone嗎😰", 
-                "Have a bad day!🥰", 
-                "誰很棒？你很棒！🫵", 
-                "我不是小孩，但為什麼一直想吃零食🤔",
-                "奶油粉絲團團長在此🐶"
-            ];
-            let randomIndex = Math.floor(Math.random() * quotes.length);
-            document.getElementById("output").innerText = quotes[randomIndex];
-        }
+    // 報時功能
+    function updateClock() {
+      let now = new Date();
+      let hours = now.getHours();
+      let minutes = now.getMinutes();
+      let seconds = now.getSeconds();
+      let ampm = hours >= 12 ? "PM" : "AM";
 
-        function xuanIndex() {
-            const index = Math.floor(Math.random() * 101); // 產生 0~100 的隨機數
-            let status = "";
+      hours = hours % 12 || 12; // 12 小時制
+      minutes = minutes < 10 ? "0" + minutes : minutes;
+      seconds = seconds < 10 ? "0" + seconds : seconds;
 
-            if (index >= 80) {
-                status = "🌳 樹木繁茂，充滿活力！💖";
-            } else if (index >= 60) {
-                status = "🌿 枝葉茂盛，狀態不錯！💖";
-            } else if (index >= 40) {
-                status = "🍂 有點疲憊，需要灌溉！💖";
-            } else {
-                status = "🌱 有點枯萎，記得休息！💖";
-            }
+      let timeString = `現在時間：${hours}:${minutes}:${seconds} ${ampm}`;
+      document.getElementById("clock").innerText = timeString;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
 
-            document.getElementById("output").innerText = `今天的萱萱指數：${index}%！${status}`;
-        }
+    // 顯示關於萱萱
+    function showInfo() {
+      document.getElementById("output").innerText =
+        "萱萱是一個愛美劇、愛吃美食又討厭『優化』的台中人！夢想是去冰島！👽";
+    }
 
-        // 蘋果掉落，採用 CSS 動畫實現
-        function dropApple() {
-            const apple = document.getElementById("apple");
-            if (!apple.classList.contains("drop")) {
-                apple.classList.add("drop");
-                apple.addEventListener("animationend", () => {
-                    apple.classList.remove("drop");
-                }, { once: true });
-            }
-        }
+    // 隨機萱萱金句
+    function randomQuote() {
+      const quotes = [
+        "買鞋真的好難，寬腳人生太痛苦了🥲", 
+        "美劇萬歲！TBBT、HIMYM、Modern Family 是人生寶藏", 
+        "時薪25元買得起Iphone嗎😰", 
+        "Have a bad day!🥰", 
+        "誰很棒？你很棒！🫵", 
+        "我不是小孩，但為什麼一直想吃零食🤔",
+        "奶油粉絲團團長在此🐶"
+      ];
+      let randomIndex = Math.floor(Math.random() * quotes.length);
+      document.getElementById("output").innerText = quotes[randomIndex];
+    }
 
-        // 切換主題（亮/暗模式）
-        function toggleTheme() {
-            document.body.classList.toggle("dark-mode");
-        }
-    </script>
+    // 今日萱萱指數
+    function xuanIndex() {
+      const index = Math.floor(Math.random() * 101); // 0~100
+      let status = "";
+
+      if (index >= 80) {
+        status = "🌳 樹木繁茂，充滿活力！💖";
+      } else if (index >= 60) {
+        status = "🌿 枝葉茂盛，狀態不錯！💖";
+      } else if (index >= 40) {
+        status = "🍂 有點疲憊，需要灌溉！💖";
+      } else {
+        status = "🌱 有點枯萎，記得休息！💖";
+      }
+
+      document.getElementById("output").innerText =
+        `今天的萱萱指數：${index}%！${status}`;
+    }
+
+    // 蘋果掉落（用 CSS 動畫）
+    function dropApple() {
+      const apple = document.getElementById("apple");
+      if (!apple.classList.contains("drop")) {
+        apple.classList.add("drop");
+        apple.addEventListener("animationend", () => {
+          apple.classList.remove("drop");
+        }, { once: true });
+      }
+    }
+
+    // 切換主題（亮 / 暗模式）
+    function toggleTheme() {
+      document.body.classList.toggle("dark-mode");
+    }
+
+    // 綁定按鈕事件
+    document.getElementById("btn-info").addEventListener("click", showInfo);
+    document.getElementById("btn-quote").addEventListener("click", randomQuote);
+    document.getElementById("btn-index").addEventListener("click", xuanIndex);
+    document.getElementById("tree-container").addEventListener("click", dropApple);
+    document.getElementById("btn-theme").addEventListener("click", toggleTheme);
+  </script>
 </body>
 </html>
