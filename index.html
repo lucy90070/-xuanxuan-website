@@ -5,6 +5,39 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Xuanxuan Interactive</title>
   <style>
+    <style>
+  /* 定義掉落動畫 */
+  @keyframes flowerFall {
+    0% {
+      transform: translateY(-50px) rotate(0deg);
+      opacity: 0;
+    }
+    20% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(600px) rotate(360deg);
+      opacity: 0;
+    }
+  }
+
+  /* 小花樣式 */
+  .flower {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%; /* 這邊用圓形模擬花朵 */
+    animation: flowerFall 5s linear infinite;
+  }
+</style>
+
+<!-- HTML 放置一朵小花 -->
+<div class="flower" style="left: 30%; animation-delay: 0s;"></div>
+<div class="flower" style="left: 60%; animation-delay: 2s;"></div>
+
     :root {
       --primary-color: #ff69b4;
       --primary-hover: #ff1493;
