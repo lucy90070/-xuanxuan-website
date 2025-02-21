@@ -19,7 +19,12 @@
       padding: 50px;
       padding-bottom: 100px; /* 增加底部留白 */
       transition: background-color 0.3s, color 0.3s;
-      /* 移除了 overflow: hidden; 讓頁面有正常卷軸 */
+    }
+    /* 新增底部空白，確保手機也能滾動到最後 */
+    body::after {
+      content: "";
+      display: block;
+      height: 150px;
     }
     h1 {
       color: var(--primary-color);
@@ -135,17 +140,16 @@
       --message-bg: #555;
     }
     #accumulated-snow {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 0; /* 初始積雪高度為 0 */
-  background-color: white;
-  pointer-events: none;  /* 讓使用者點擊時不受影響 */
-  transition: height 1s ease-out; /* 平滑的高度改變效果 */
-  z-index: 1; /* 根據你頁面其他元素的層級調整 */
-}
-
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 0; /* 初始積雪高度為 0 */
+      background-color: white;
+      pointer-events: none;  /* 讓使用者點擊時不受影響 */
+      transition: height 1s ease-out; /* 平滑的高度改變效果 */
+      z-index: 1;
+    }
     
     /* =============================
        以下為下雪/花瓣飄落動畫的 CSS
@@ -183,8 +187,8 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      pointer-events: none; /* 不阻擋點擊 */
-      z-index: -1; /* 置於背景 */
+      pointer-events: none;
+      z-index: -1;
     }
     
     /* 響應式調整 */
@@ -239,7 +243,7 @@
     /******************************************************
      * 1. 下雪/花瓣飄落功能（獨立於其他功能）
      ******************************************************/
-    function startSnowing(count = 25) {
+    function startSnowing(count = 50) {
       const container = document.getElementById("snow-container");
       for (let i = 0; i < count; i++) {
         const snow = document.createElement("div");
@@ -261,14 +265,13 @@
     });
 
     // 每隔 500 毫秒增加積雪高度，直到達到最大高度（例如 150px）
-setInterval(() => {
-  const snowAccum = document.getElementById("accumulated-snow");
-  // 取得目前高度
-  let currentHeight = parseInt(window.getComputedStyle(snowAccum).height);
-  if (currentHeight < 150) {  // 設定最大積雪高度
-    snowAccum.style.height = (currentHeight + 1) + "px";
-  }
-}, 500);
+    setInterval(() => {
+      const snowAccum = document.getElementById("accumulated-snow");
+      let currentHeight = parseInt(window.getComputedStyle(snowAccum).height);
+      if (currentHeight < 150) {
+        snowAccum.style.height = (currentHeight + 1) + "px";
+      }
+    }, 500);
 
     /******************************************************
      * 2. Firebase 初始化 + 留言功能（動態匯入）
@@ -318,7 +321,6 @@ setInterval(() => {
           messageElem.innerHTML = `<strong>${data.name}:</strong> ${data.message} 
             <button class="delete-btn" data-id="${data.id}">❌</button>`;
           document.getElementById("messages").appendChild(messageElem);
-
           // 綁定刪除事件
           messageElem.querySelector(".delete-btn").addEventListener("click", () => {
             deleteMessage(data.id);
@@ -349,7 +351,7 @@ setInterval(() => {
       let seconds = now.getSeconds();
       let ampm = hours >= 12 ? "PM" : "AM";
       
-      hours = hours % 12 || 12; // 12 小時制
+      hours = hours % 12 || 12;
       minutes = minutes < 10 ? "0" + minutes : minutes;
       seconds = seconds < 10 ? "0" + seconds : seconds;
   
@@ -382,9 +384,8 @@ setInterval(() => {
   
     // 今日萱萱指數
     function xuanIndex() {
-      const index = Math.floor(Math.random() * 101); // 0~100
+      const index = Math.floor(Math.random() * 101);
       let status = "";
-  
       if (index >= 80) {
         status = "🌳 樹木繁茂，充滿活力！💖";
       } else if (index >= 60) {
@@ -394,7 +395,6 @@ setInterval(() => {
       } else {
         status = "🌱 有點枯萎，記得休息！💖";
       }
-  
       document.getElementById("output").innerText =
         `今天的萱萱指數：${index}%！${status}`;
     }
