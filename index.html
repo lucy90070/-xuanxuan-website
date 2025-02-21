@@ -17,10 +17,10 @@
       text-align: center;
       background-color: var(--background-color);
       padding: 50px;
-      padding-bottom: 100px; /* 增加底部留白，讓手機也能捲到底 */
+      padding-bottom: 100px; /* 確保手機也能滾到最底 */
       transition: background-color 0.3s, color 0.3s;
     }
-    /* 在手機上確保可往下捲到底 */
+    /* 手機上留白，避免捲不到底 */
     body::after {
       content: "";
       display: block;
@@ -140,10 +140,9 @@
       --message-bg: #555;
     }
 
-    /* ----------------------------------
-       下雪 + 波浪形積雪的相關 CSS
-    ---------------------------------- */
-    /* 雪花容器 (下雪) */
+    /* ================
+       下雪功能
+    ================ */
     #snow-container {
       position: fixed;
       top: 0;
@@ -178,7 +177,9 @@
       animation-iteration-count: infinite;
     }
 
-    /* 波浪形積雪容器 */
+    /* ================
+       波浪形積雪
+    ================ */
     #accumulated-snow {
       position: fixed;
       bottom: 0;
@@ -189,31 +190,31 @@
       transition: height 1s ease-out;
       z-index: 1;
       background-color: white; /* 整塊都是雪 */
-      overflow: visible;       /* 讓波浪頂部可以顯示在容器外 */
+      overflow: visible;
     }
-
-    /* 在容器內部不需要再分雪塊 + 波浪塊了，
-       直接用 .wave-top 做頂部波浪，固定高度 50px。 */
+    /* 波浪頂部：高度固定 50px，貼在容器最上面 (top: 0) */
     .wave-top {
       position: absolute;
-      bottom: 100%;   /* 讓波浪頂部緊貼在容器的最上方 */
+      top: 0;
       left: 0;
       width: 100%;
       height: 50px;
       background-color: white;
-      /* clip-path 產生波浪形狀：
-         這個波浪是從上方開始 (0% 0%) 到 (100% 0%) ，
-         再延伸到底 (100% 100%), (0% 100%)。 */
+      /*
+        clip-path: 讓「下緣」是波浪狀，
+        上緣是平的 (0% 0% 到 100% 0%)。
+        容器越長，波浪就一直在最頂端。
+      */
       clip-path: polygon(
-        0% 100%,
-        10% 80%,
-        25% 100%,
-        40% 80%,
-        60% 100%,
-        80% 80%,
-        100% 100%,
+        0% 0%,
+        10% 20%,
+        25% 0%,
+        40% 20%,
+        60% 0%,
+        80% 20%,
         100% 0%,
-        0% 0%
+        100% 100%,
+        0% 100%
       );
     }
 
@@ -231,7 +232,7 @@
 <body>
   <!-- 雪花容器 (下雪) -->
   <div id="snow-container"></div>
-  
+
   <h1>歡迎來認識萱萱！</h1>
   <p>點擊下方按鈕，探索關於萱萱的小秘密～</p>
   <p id="clock"></p>
@@ -269,7 +270,7 @@
 
   <script type="module">
     /******************************************************
-     * 1. 下雪/花瓣飄落功能
+     * 1. 下雪功能
      ******************************************************/
     function startSnowing(count = 50) {
       const container = document.getElementById("snow-container");
@@ -292,7 +293,7 @@
       startSnowing(50);
     });
 
-    // 動態增加積雪高度，維持波浪頂部
+    // 每 0.5 秒讓 #accumulated-snow 高度 +1px，直到 150px
     setInterval(() => {
       const snowAccum = document.getElementById("accumulated-snow");
       let currentHeight = parseInt(window.getComputedStyle(snowAccum).height);
@@ -307,7 +308,6 @@
     import('https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js').then(({ initializeApp }) => {
       import('https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js').then((dbModule) => {
         const { getDatabase, ref, push, set, remove, onChildAdded, onChildRemoved } = dbModule;
-
         const firebaseConfig = {
           apiKey: "AIzaSyCeVz567cFsoGzBwXjflJqeuZcOUrUFInE",
           authDomain: "xuanxuan-website.firebaseapp.com",
@@ -331,12 +331,10 @@
             document.getElementById("message-input").value = "";
           }
         }
-
         function deleteMessage(messageId) {
           remove(ref(db, `messages/${messageId}`))
             .catch(error => console.error("刪除留言錯誤:", error));
         }
-
         onChildAdded(messagesRef, (snapshot) => {
           const data = snapshot.val();
           const messageElem = document.createElement("div");
@@ -345,20 +343,16 @@
           messageElem.innerHTML = `<strong>${data.name}:</strong> ${data.message} 
             <button class="delete-btn" data-id="${data.id}">❌</button>`;
           document.getElementById("messages").appendChild(messageElem);
-
-          // 綁定刪除事件
           messageElem.querySelector(".delete-btn").addEventListener("click", () => {
             deleteMessage(data.id);
           });
         });
-
         onChildRemoved(messagesRef, (snapshot) => {
           const messageElem = document.getElementById(snapshot.key);
           if (messageElem) {
             messageElem.remove();
           }
         });
-
         document.getElementById("btn-send").addEventListener("click", sendMessage);
       });
     });
@@ -366,7 +360,6 @@
     /******************************************************
      * 3. 其他功能：報時、萱萱金句、蘋果掉落、切換主題
      ******************************************************/
-    // 報時功能
     function updateClock() {
       let now = new Date();
       let hours = now.getHours();
@@ -384,13 +377,10 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // 顯示關於萱萱
     function showInfo() {
       document.getElementById("output").innerText =
         "萱萱是一個愛美劇、愛吃美食又討厭『優化』的台中人！夢想是去冰島！👽";
     }
-
-    // 隨機萱萱金句
     function randomQuote() {
       const quotes = [
         "買鞋真的好難，寬腳人生太痛苦了🥲", 
@@ -404,8 +394,6 @@
       let randomIndex = Math.floor(Math.random() * quotes.length);
       document.getElementById("output").innerText = quotes[randomIndex];
     }
-
-    // 今日萱萱指數
     function xuanIndex() {
       const index = Math.floor(Math.random() * 101);
       let status = "";
@@ -421,8 +409,6 @@
       document.getElementById("output").innerText =
         `今天的萱萱指數：${index}%！${status}`;
     }
-
-    // 蘋果掉落（用 CSS 動畫）
     function dropApple() {
       const apple = document.getElementById("apple");
       if (!apple.classList.contains("drop")) {
@@ -432,13 +418,10 @@
         }, { once: true });
       }
     }
-
-    // 切換主題（亮 / 暗模式）
     function toggleTheme() {
       document.body.classList.toggle("dark-mode");
     }
 
-    // 綁定按鈕事件
     document.getElementById("btn-info").addEventListener("click", showInfo);
     document.getElementById("btn-quote").addEventListener("click", randomQuote);
     document.getElementById("btn-index").addEventListener("click", xuanIndex);
