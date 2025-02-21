@@ -18,7 +18,7 @@
       background-color: var(--background-color);
       padding: 50px;
       transition: background-color 0.3s, color 0.3s;
-      overflow: hidden; /* 防止雪花產生捲軸 */
+      /* 移除了 overflow: hidden; 讓頁面有正常卷軸 */
     }
     h1 {
       color: var(--primary-color);
@@ -134,9 +134,9 @@
       --message-bg: #555;
     }
     
-    /* =========================================
+    /* =============================
        以下為下雪/花瓣飄落動畫的 CSS
-    ========================================= */
+    ============================= */
     @keyframes snowFall {
       0% {
         transform: translateY(-50px);
@@ -153,14 +153,25 @@
     .snow {
       position: absolute;
       top: 0;
-      /* left 會由 JavaScript 動態設定 */
-      width: 20px;      /* 調整大小讓雪花/花瓣更明顯 */
+      /* left 由 JavaScript 動態設定 */
+      width: 20px;
       height: 20px;
-      background-color: white; /* 若覺得不夠明顯，可換成其他顏色 */
+      background-color: white;
       border-radius: 50%;
       animation-name: snowFall;
       animation-timing-function: linear;
       animation-iteration-count: infinite;
+    }
+    
+    /* 新增一個雪花容器，不影響主要內容的滾動 */
+    #snow-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none; /* 不阻擋點擊 */
+      z-index: -1; /* 置於背景 */
     }
     
     /* 響應式調整 */
@@ -175,6 +186,9 @@
   </style>
 </head>
 <body>
+  <!-- 新增雪花容器 -->
+  <div id="snow-container"></div>
+  
   <h1>歡迎來認識萱萱！</h1>
   <p>點擊下方按鈕，探索關於萱萱的小秘密～</p>
   <p id="clock"></p>
@@ -205,14 +219,14 @@
     <div id="messages"></div>
   </div>
 
-  <!-- 以下的下雪/花瓣飄落功能是由 JavaScript 動態生成 -->
+  <!-- **單一 script**：Firebase、下雪功能、其他功能全部放在這裡 -->
   <script>
     /******************************************************
-     * 1. 下雪/花瓣飄落功能（獨立於 Firebase 部分）
+     * 1. 下雪/花瓣飄落功能（獨立於其他功能）
      ******************************************************/
-    function startSnowing(count = 50) {
+    function startSnowing(count = 30) {
+      const container = document.getElementById("snow-container");
       for (let i = 0; i < count; i++) {
-        // 建立一個 <div class="snow"></div>
         const snow = document.createElement("div");
         snow.classList.add("snow");
         // 隨機水平位置（0 ~ 100vw）
@@ -224,13 +238,11 @@
         // 隨機動畫時長（5 ~ 10秒）
         const randomDuration = 5 + Math.random() * 5;
         snow.style.animationDuration = randomDuration + "s";
-        // 加入到 body 中
-        document.body.appendChild(snow);
+        container.appendChild(snow);
       }
     }
-    // 當 DOM 內容載入完成後執行下雪功能
     window.addEventListener("DOMContentLoaded", () => {
-      startSnowing(50); // 產生 50 個雪花/花瓣
+      startSnowing(50);
     });
 
     /******************************************************
