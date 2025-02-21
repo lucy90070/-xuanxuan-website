@@ -17,10 +17,10 @@
       text-align: center;
       background-color: var(--background-color);
       padding: 50px;
-      padding-bottom: 100px; /* 增加底部留白 */
+      padding-bottom: 100px; /* 增加底部留白，讓手機也能捲到底 */
       transition: background-color 0.3s, color 0.3s;
     }
-    /* 新增底部空白，確保手機也能滾動到最後 */
+    /* 在手機上確保可往下捲到底 */
     body::after {
       content: "";
       display: block;
@@ -122,7 +122,7 @@
       top: 20px;
       left: 45px;
     }
-    /* CSS 動畫：蘋果掉落 */
+    /* 蘋果掉落動畫 */
     @keyframes drop {
       0% { top: 20px; }
       50% { top: 120px; }
@@ -139,53 +139,20 @@
       --primary-hover: #ffa6c9;
       --message-bg: #555;
     }
-    /* ------------------------------
-       波浪形積雪（積雪堆）的 CSS
-    ------------------------------ */
-    #accumulated-snow {
+
+    /* ----------------------------------
+       下雪 + 波浪形積雪的相關 CSS
+    ---------------------------------- */
+    /* 雪花容器 (下雪) */
+    #snow-container {
       position: fixed;
-      bottom: 0;
+      top: 0;
       left: 0;
-      width: 100%;
-      height: 0; /* 初始積雪高度為 0 */
+      width: 100vw;
+      height: 100vh;
       pointer-events: none;
-      transition: height 1s ease-out;
-      z-index: 1;
-      overflow: visible;
+      z-index: -1;
     }
-    /* 雪塊本體，填滿除去波浪頂部外的部分 */
-    .snow-body {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: calc(100% - 50px);  /* 減去波浪部分 */
-      background-color: white;
-      overflow: visible;
-    }
-    /* 波浪形頂部，固定高度 50px，並用 clip-path 裁切出波浪狀 */
-    .wave-top {
-      position: absolute;
-      top: calc(100% - 50px);
-      left: 0;
-      width: 100%;
-      height: 50px;
-      background-color: white;
-      clip-path: polygon(
-        0% 100%,
-        10% 80%,
-        25% 100%,
-        40% 80%,
-        60% 100%,
-        80% 80%,
-        100% 100%,
-        100% 100%,
-        0% 100%
-      );
-    }
-    /* ------------------------------
-       下雪/花瓣飄落的 CSS
-    ------------------------------ */
     @keyframes snowFall {
       0% {
         transform: translateY(-50px);
@@ -210,19 +177,47 @@
       animation-timing-function: linear;
       animation-iteration-count: infinite;
     }
-    /* 雪花容器 */
-    #snow-container {
+
+    /* 波浪形積雪容器 */
+    #accumulated-snow {
       position: fixed;
-      top: 0;
+      bottom: 0;
       left: 0;
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none;
-      z-index: -1;
+      width: 100%;
+      height: 0;              /* 由 JS 動態增加 0 → 150px */
+      pointer-events: none;   /* 不阻擋滑鼠點擊 */
+      transition: height 1s ease-out;
+      z-index: 1;
+      background-color: white; /* 整塊都是雪 */
+      overflow: visible;       /* 讓波浪頂部可以顯示在容器外 */
     }
-    /* ------------------------------
-       響應式調整
-    ------------------------------ */
+
+    /* 在容器內部不需要再分雪塊 + 波浪塊了，
+       直接用 .wave-top 做頂部波浪，固定高度 50px。 */
+    .wave-top {
+      position: absolute;
+      bottom: 100%;   /* 讓波浪頂部緊貼在容器的最上方 */
+      left: 0;
+      width: 100%;
+      height: 50px;
+      background-color: white;
+      /* clip-path 產生波浪形狀：
+         這個波浪是從上方開始 (0% 0%) 到 (100% 0%) ，
+         再延伸到底 (100% 100%), (0% 100%)。 */
+      clip-path: polygon(
+        0% 100%,
+        10% 80%,
+        25% 100%,
+        40% 80%,
+        60% 100%,
+        80% 80%,
+        100% 100%,
+        100% 0%,
+        0% 0%
+      );
+    }
+
+    /* 響應式調整 */
     @media (max-width: 600px) {
       body {
         padding: 20px;
@@ -234,22 +229,22 @@
   </style>
 </head>
 <body>
-  <!-- 雪花容器 -->
+  <!-- 雪花容器 (下雪) -->
   <div id="snow-container"></div>
   
   <h1>歡迎來認識萱萱！</h1>
   <p>點擊下方按鈕，探索關於萱萱的小秘密～</p>
   <p id="clock"></p>
-  
+
   <div id="button-container">
     <button id="btn-info">關於萱萱</button>
     <button id="btn-quote">萱萱金句</button>
     <button id="btn-index">今日萱萱指數</button>
     <button id="btn-theme">切換主題</button>
   </div>
-  
+
   <p id="output"></p>
-  
+
   <!-- 蘋果樹 -->
   <div id="tree-container">
     <div class="tree-leaves"></div>
@@ -257,7 +252,7 @@
     <div class="apple" id="apple"></div>
   </div>
   <p>點擊樹，摘蘋果給萱萱吃！🍎</p>
-  
+
   <!-- 留言區 -->
   <div id="message-box">
     <h3>留言區</h3>
@@ -266,17 +261,15 @@
     <button id="btn-send">發送</button>
     <div id="messages"></div>
   </div>
-  
-  <!-- 改為巢狀結構的波浪形積雪 -->
+
+  <!-- 波浪形積雪 -->
   <div id="accumulated-snow">
-    <div class="snow-body"></div>
     <div class="wave-top"></div>
   </div>
-  
-  <!-- 單一 script：Firebase、下雪功能、積雪、其他功能 -->
+
   <script type="module">
     /******************************************************
-     * 1. 下雪/花瓣飄落功能（獨立於其他功能）
+     * 1. 下雪/花瓣飄落功能
      ******************************************************/
     function startSnowing(count = 50) {
       const container = document.getElementById("snow-container");
@@ -298,8 +291,8 @@
     window.addEventListener("DOMContentLoaded", () => {
       startSnowing(50);
     });
-    
-    // 增加積雪高度，每隔 500 毫秒讓 #accumulated-snow 高度增加 1px，最大到 150px
+
+    // 動態增加積雪高度，維持波浪頂部
     setInterval(() => {
       const snowAccum = document.getElementById("accumulated-snow");
       let currentHeight = parseInt(window.getComputedStyle(snowAccum).height);
@@ -307,13 +300,14 @@
         snowAccum.style.height = (currentHeight + 1) + "px";
       }
     }, 500);
-    
+
     /******************************************************
      * 2. Firebase 初始化 + 留言功能（動態匯入）
      ******************************************************/
     import('https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js').then(({ initializeApp }) => {
       import('https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js').then((dbModule) => {
         const { getDatabase, ref, push, set, remove, onChildAdded, onChildRemoved } = dbModule;
+
         const firebaseConfig = {
           apiKey: "AIzaSyCeVz567cFsoGzBwXjflJqeuZcOUrUFInE",
           authDomain: "xuanxuan-website.firebaseapp.com",
@@ -326,6 +320,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const messagesRef = ref(db, "messages");
+
         function sendMessage() {
           const name = document.getElementById("name-input").value.trim();
           const message = document.getElementById("message-input").value.trim();
@@ -336,10 +331,12 @@
             document.getElementById("message-input").value = "";
           }
         }
+
         function deleteMessage(messageId) {
           remove(ref(db, `messages/${messageId}`))
             .catch(error => console.error("刪除留言錯誤:", error));
         }
+
         onChildAdded(messagesRef, (snapshot) => {
           const data = snapshot.val();
           const messageElem = document.createElement("div");
@@ -348,41 +345,52 @@
           messageElem.innerHTML = `<strong>${data.name}:</strong> ${data.message} 
             <button class="delete-btn" data-id="${data.id}">❌</button>`;
           document.getElementById("messages").appendChild(messageElem);
+
+          // 綁定刪除事件
           messageElem.querySelector(".delete-btn").addEventListener("click", () => {
             deleteMessage(data.id);
           });
         });
+
         onChildRemoved(messagesRef, (snapshot) => {
           const messageElem = document.getElementById(snapshot.key);
           if (messageElem) {
             messageElem.remove();
           }
         });
+
         document.getElementById("btn-send").addEventListener("click", sendMessage);
       });
     });
-    
+
     /******************************************************
      * 3. 其他功能：報時、萱萱金句、蘋果掉落、切換主題
      ******************************************************/
+    // 報時功能
     function updateClock() {
       let now = new Date();
       let hours = now.getHours();
       let minutes = now.getMinutes();
       let seconds = now.getSeconds();
       let ampm = hours >= 12 ? "PM" : "AM";
+
       hours = hours % 12 || 12;
       minutes = minutes < 10 ? "0" + minutes : minutes;
       seconds = seconds < 10 ? "0" + seconds : seconds;
+
       let timeString = `現在時間：${hours}:${minutes}:${seconds} ${ampm}`;
       document.getElementById("clock").innerText = timeString;
     }
     setInterval(updateClock, 1000);
     updateClock();
+
+    // 顯示關於萱萱
     function showInfo() {
       document.getElementById("output").innerText =
         "萱萱是一個愛美劇、愛吃美食又討厭『優化』的台中人！夢想是去冰島！👽";
     }
+
+    // 隨機萱萱金句
     function randomQuote() {
       const quotes = [
         "買鞋真的好難，寬腳人生太痛苦了🥲", 
@@ -396,6 +404,8 @@
       let randomIndex = Math.floor(Math.random() * quotes.length);
       document.getElementById("output").innerText = quotes[randomIndex];
     }
+
+    // 今日萱萱指數
     function xuanIndex() {
       const index = Math.floor(Math.random() * 101);
       let status = "";
@@ -411,6 +421,8 @@
       document.getElementById("output").innerText =
         `今天的萱萱指數：${index}%！${status}`;
     }
+
+    // 蘋果掉落（用 CSS 動畫）
     function dropApple() {
       const apple = document.getElementById("apple");
       if (!apple.classList.contains("drop")) {
@@ -420,9 +432,13 @@
         }, { once: true });
       }
     }
+
+    // 切換主題（亮 / 暗模式）
     function toggleTheme() {
       document.body.classList.toggle("dark-mode");
     }
+
+    // 綁定按鈕事件
     document.getElementById("btn-info").addEventListener("click", showInfo);
     document.getElementById("btn-quote").addEventListener("click", randomQuote);
     document.getElementById("btn-index").addEventListener("click", xuanIndex);
