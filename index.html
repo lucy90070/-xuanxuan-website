@@ -236,7 +236,12 @@
     <div id="messages"></div>
   </div>
 
-  <div id="accumulated-snow"></div>
+  <!-- 波浪形積雪 -->
+<div id="accumulated-snow">
+  <div class="snow-body">
+    <div class="wave-top"></div>
+  </div>
+</div>
 
   <!-- **單一 script**：Firebase、下雪功能、其他功能全部放在這裡 -->
   <script>
@@ -264,14 +269,51 @@
       startSnowing(50);
     });
 
-    // 每隔 500 毫秒增加積雪高度，直到達到最大高度（例如 150px）
-    setInterval(() => {
-      const snowAccum = document.getElementById("accumulated-snow");
-      let currentHeight = parseInt(window.getComputedStyle(snowAccum).height);
-      if (currentHeight < 150) {
-        snowAccum.style.height = (currentHeight + 1) + "px";
-      }
-    }, 500);
+/* 最外層容器：控制整塊積雪的高度 (0 → 150px)。 */
+#accumulated-snow {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0;               /* 初始積雪高度 = 0 */
+  pointer-events: none;    /* 不阻擋滑鼠點擊 */
+  transition: height 1s ease-out;
+  z-index: 1;             /* 調整層級到最上層 */
+  overflow: visible;      /* 讓裡面波浪可以超出容器頂部 */
+}
+
+/* 實際的雪塊：跟著外層容器的 height 一起增高。 */
+.snow-body {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: white; 
+  overflow: visible;
+}
+
+/* 波浪形頂部：固定 50px 高，用 clip-path 製作波浪。 */
+.wave-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;           /* 波浪高度，可自行調整 */
+  background-color: white;
+  clip-path: polygon(
+    0% 0%,
+    10% 5%,
+    25% 0%,
+    40% 5%,
+    60% 0%,
+    80% 5%,
+    100% 0%,
+    100% 100%,
+    0% 100%
+  );
+}
+
 
     /******************************************************
      * 2. Firebase 初始化 + 留言功能（動態匯入）
